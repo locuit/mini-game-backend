@@ -1,13 +1,27 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 import { SessionModule } from './session/session.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
-import { CommonModule } from './common/common.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [SessionModule, LeaderboardModule, CommonModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGODB_URI, {
+      connectTimeoutMS: 30000,
+      serverSelectionTimeoutMS: 30000,
+      maxPoolSize: 10,
+      retryAttempts: 10,
+      retryDelay: 5000,
+    }),
+    ScheduleModule.forRoot(),
+    SessionModule,
+    LeaderboardModule,
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log('MONGODB_URI:', process.env.MONGODB_URI);
+  }
+}

@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: Mini Game Backend API
+  description: API for Mì ăn liền mini game
+  version: 1.0.0
+paths:
+  /session:
+    post:
+      summary: Create a new session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionDto'
+      responses:
+        '201':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId: { type: string }
+  /session/score:
+    post:
+      summary: Submit a score for a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitScoreDto'
+      responses:
+        '201':
+          description: Score submitted
+  /session/history:
+    get:
+      summary: Get recent play history
+      responses:
+        '200':
+          description: Recent sessions
+  /leaderboard:
+    get:
+      summary: Get top 20 leaderboard
+      responses:
+        '200':
+          description: Leaderboard data
+  /leaderboard/rank:
+    get:
+      summary: Get rank for a specific score
+      parameters:
+        - name: score
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Rank position
+components:
+  schemas:
+    CreateSessionDto:
+      type: object
+      properties:
+        clientIp:
+          type: string
+      required: [clientIp]
+    SubmitScoreDto:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        score:
+          type: number
+        timePlayed:
+          type: number
+      required: [sessionId, score]
